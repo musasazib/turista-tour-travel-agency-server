@@ -20,16 +20,16 @@ async function run() {
         await client.connect();
         const database = client.db('turistaTravel');
         const servicesCollection = database.collection('services');
+        const ordersCollection = database.collection('orders');
 
-        // Get API
+        // Get service API
         app.get('/services', async (req, res) => {
-
             const cursor = servicesCollection.find({});
             const services = await cursor.toArray();
             res.send(services);
         });
 
-        // Post API
+        // Post service API
         app.post('/services', async (req, res) => {
             const service = req.body;
             console.log('Hit the post API', service);
@@ -37,14 +37,38 @@ async function run() {
             res.json(result);
         });
 
+
+        // Post orders API
+        app.post('/orders', async (req, res) => {
+            const service = req.body;
+            console.log('Hit the post API', service);
+            const result = await ordersCollection.insertOne(service);
+            res.json(result);
+        });
+
+         // Get order API
+         app.get('/orders', async (req, res) => {
+            const cursor = ordersCollection.find({});
+            const orders = await cursor.toArray();
+            res.send(orders);
+        });
+
+        // Get may booking API
+        app.get("/myBooking/:email", async (req, res) => {
+            const result = await ordersCollection.find({
+              email: req.params.email,
+            }).toArray();
+            res.send(result);
+          });
+
         // Delete API
-        app.delete('/services/:id', async (req, res) => {
+        app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const result = await servicesCollection.deleteOne(query);
+            const result = await ordersCollection.deleteOne(query);
             // console.log('Delete success', result);
             res.json(result);
-        })
+        });
 
     }
     finally {
