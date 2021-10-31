@@ -53,7 +53,7 @@ async function run() {
             res.send(orders);
         });
 
-        // Get may booking API
+        // Get my booking API
         app.get("/myBooking/:email", async (req, res) => {
             const result = await ordersCollection.find({
               email: req.params.email,
